@@ -60,7 +60,7 @@ public class SecureStreamEngine {
         InputStream simulatedUploadStream = new ByteArrayInputStream(mockFileBytes);
 
         // 3. Execute the streaming pipeline
-        engine.processIncomingStream(simulatedUploadStream);
+        engine.processIncomingStream(null);
 
         System.out.println("=== INGESTION ENGINE IDLE ===");
     }
