@@ -75,21 +75,31 @@ public class SecureStreamEngine {
     }
 
     public static void main(String[] args) {
-        System.out.println("=== LAUNCHING EMPIRE VAULT INGESTION & INTEGRITY TEST ===\n");
+        System.out.println("=== TESTING TAMPER-EVIDENT AVALANCHE EFFECT ===\n");
 
         SecureStreamEngine engine = new SecureStreamEngine();
 
-        // Test 1: Verify our defensive gate still blocks null attacks
-        System.out.println("--- Test 1: Malicious Null Payload ---");
-        engine.processAndFingerprintStream(null);
+        // 1. Original, untouched tactical video stream
+        String originalVideo = "AV1_HEADER_DATA_" + "FRAME_PAYLOAD_".repeat(1200);
+        InputStream stream1 = new ByteArrayInputStream(originalVideo.getBytes(StandardCharsets.UTF_8));
 
-        // Test 2: Simulate a valid 15KB tactical gameplay recording
-        System.out.println("\n--- Test 2: Valid Media Asset Stream ---");
-        String mockVideoData = "AV1_HEADER_DATA_" + "FRAME_PAYLOAD_".repeat(1200);
-        InputStream validStream = new ByteArrayInputStream(mockVideoData.getBytes(StandardCharsets.UTF_8));
+        System.out.println("--- 1. Original Clean File ---");
+        String hash1 = engine.processAndFingerprintStream(stream1);
 
-        engine.processAndFingerprintStream(validStream);
+        // 2. Tampered file: Notice we only changed the very first 'A' to a lowercase 'a'
+        String tamperedVideo = "aV1_HEADER_DATA_" + "FRAME_PAYLOAD_".repeat(1200);
+        InputStream stream2 = new ByteArrayInputStream(tamperedVideo.getBytes(StandardCharsets.UTF_8));
 
-        System.out.println("\n=== INGESTION ENGINE IDLE ===");
+        System.out.println("\n--- 2. Tampered File (1 Character Altered) ---");
+        String hash2 = engine.processAndFingerprintStream(stream2);
+
+        // 3. Automated Security Audit Check
+        System.out.println("\n=== SECURITY AUDIT RESULT ===");
+        if (hash1.equals(hash2)) {
+            System.out.println("[PASS] Hashes match. File integrity is intact.");
+        } else {
+            System.err.println("[CRITICAL ALERT] Hash mismatch detected! File has been tampered with!");
+        }
     }
+
 }
